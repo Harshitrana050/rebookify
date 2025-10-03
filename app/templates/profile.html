@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><title>Your Profile - Rebookify</title></head>
+<body>
+  <h2>Your Profile</h2>
+  <p><strong>Name:</strong> {{ user.name }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Contact:</strong> {{ user.contact or 'N/A' }}</p>
+  <p><strong>Role:</strong> {{ user.role }}</p>
+
+  <p><a href="{{ url_for('edit_profile') }}">Edit Profile</a></p>
+
+  {% if user.role == 'seller' %}
+    <h3>Your Listed Books</h3>
+    <ul>
+      {% for book in books %}
+        <li>{{ book.title }} - ${{ "%.2f"|format(book.price) }}</li>
+      {% else %}
+        <li>You have no books listed.</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+</body>
+</html>

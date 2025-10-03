@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Add Book - Rebookify</title></head>
+<body>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+    {% endif %}
+  {% endwith %}
+  <h2>Add New Book</h2>
+  <form method="POST">
+    Title: <input type="text" name="title" required><br>
+    Author: <input type="text" name="author"><br>
+    Description:<br>
+    <textarea name="description"></textarea><br>
+    Condition: <input type="text" name="condition"><br>
+    Price: <input type="number" step="0.01" name="price" required><br>
+    Image URL: <input type="text" name="image_url"><br>
+    <input type="submit" value="Add Book">
+  </form>
+  <p><a href="{{ url_for('books') }}">Back to Books</a></p>
+</body>
+</html>

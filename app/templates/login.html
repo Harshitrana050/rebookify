@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Login - Rebookify</title></head>
+<body>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul>{% for m in messages %}<li>{{m}}</li>{% endfor %}</ul>
+    {% endif %}
+  {% endwith %}
+  <h2>Login</h2>
+  <form method="POST">
+    Email: <input type="email" name="email" required><br>
+    Password: <input type="password" name="password" required><br>
+    <input type="submit" value="Login">
+  </form>
+  <a href="{{ url_for('register') }}">Don’t have an account? Register</a>
+</body>
+</html>
