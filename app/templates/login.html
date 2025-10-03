@@ -1,18 +1,25 @@
 <!DOCTYPE html>
-<html>
-<head><title>Login - Rebookify</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - Rebookify</title>
+</head>
 <body>
+  <h2>Login</h2>
+
   {% with messages = get_flashed_messages() %}
     {% if messages %}
-      <ul>{% for m in messages %}<li>{{m}}</li>{% endfor %}</ul>
+      <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
     {% endif %}
   {% endwith %}
-  <h2>Login</h2>
+
   <form method="POST">
-    Email: <input type="email" name="email" required><br>
-    Password: <input type="password" name="password" required><br>
+    <input type="email" name="email" placeholder="Email" required><br><br>
+    <input type="password" name="password" placeholder="Password" required><br><br>
     <input type="submit" value="Login">
   </form>
-  <a href="{{ url_for('register') }}">Don’t have an account? Register</a>
+
+  <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a>.</p>
 </body>
 </html>

@@ -3,6 +3,9 @@ from flask import render_template, request, redirect, url_for, flash
 from app.models import User, Book, Message
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy import or_
+import re
+
+from app.decorators import seller_required
 
 @app.route('/')
 @login_required
@@ -18,15 +21,38 @@ def register():
         email = request.form['email']
         contact = request.form['contact']
         password = request.form['password']
+        password_confirm = request.form.get('password_confirm', '')
         role = request.form['role']
+
+        # Basic validation
+        if not name or not email or not password or not password_confirm:
+            flash('Please fill out all required fields.')
+            return redirect(url_for('register'))
+
+        if password != password_confirm:
+            flash('Passwords do not match.')
+            return redirect(url_for('register'))
+
+        # Email format check
+        email_regex = r"[^@]+@[^@]+\.[^@]+"
+        if not re.match(email_regex, email):
+            flash('Invalid email address.')
+            return redirect(url_for('register'))
+
+        # Password strength (8 chars min, with number)
+        if len(password) < 8 or not re.search(r'\d', password):
+            flash('Password must be at least 8 characters long and contain a number.')
+            return redirect(url_for('register'))
+
         if User.query.filter_by(email=email).first():
             flash('Email already registered.')
             return redirect(url_for('register'))
+
         user = User(name=name, email=email, contact=contact, role=role)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-        flash('Registered! Please log in.')
+        flash('Registration successful! Please log in.')
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -53,7 +79,6 @@ def logout():
 @app.route('/books', methods=['GET'])
 def books():
     query = Book.query
-
     title = request.args.get('title', '').strip()
     author = request.args.get('author', '').strip()
     min_price = request.args.get('min_price', '').strip()
@@ -76,10 +101,8 @@ def books():
 
 @app.route('/books/add', methods=['GET', 'POST'])
 @login_required
+@seller_required
 def add_book():
-    if current_user.role != 'seller':
-        flash('Only sellers can add books.')
-        return redirect(url_for('books'))
     if request.method == 'POST':
         title = request.form.get('title')
         author = request.form.get('author')
@@ -107,12 +130,12 @@ def add_book():
 
 @app.route('/books/edit/<int:book_id>', methods=['GET', 'POST'])
 @login_required
+@seller_required
 def edit_book(book_id):
     book = Book.query.get_or_404(book_id)
     if book.seller_id != current_user.id:
         flash('You are not authorized to edit this book.')
         return redirect(url_for('books'))
-
     if request.method == 'POST':
         title = request.form.get('title')
         author = request.form.get('author')
@@ -124,7 +147,6 @@ def edit_book(book_id):
         if not title or not price:
             flash('Title and price are required.')
             return redirect(url_for('edit_book', book_id=book.id))
-
         try:
             price_val = float(price)
         except ValueError:
@@ -141,17 +163,16 @@ def edit_book(book_id):
         db.session.commit()
         flash('Book updated successfully.')
         return redirect(url_for('books'))
-
     return render_template('edit_book.html', book=book)
 
 @app.route('/books/delete/<int:book_id>', methods=['POST'])
 @login_required
+@seller_required
 def delete_book(book_id):
     book = Book.query.get_or_404(book_id)
     if book.seller_id != current_user.id:
         flash('You are not authorized to delete this book.')
         return redirect(url_for('books'))
-
     db.session.delete(book)
     db.session.commit()
     flash('Book deleted successfully.')
@@ -189,15 +210,26 @@ def edit_profile():
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
         contact = request.form.get('contact', '').strip()
-
         if not name:
             flash('Name cannot be empty.')
             return redirect(url_for('edit_profile'))
-
         current_user.name = name
         current_user.contact = contact
         db.session.commit()
         flash('Profile updated successfully.')
         return redirect(url_for('profile'))
-
     return render_template('edit_profile.html', user=current_user)
+
+# Error handlers
+@app.errorhandler(403)
+def forbidden_error(error):
+    return render_template('errors/403.html'), 403
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('errors/500.html'), 500

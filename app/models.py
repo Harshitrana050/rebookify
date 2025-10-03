@@ -24,7 +24,6 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -34,7 +33,6 @@ class Book(db.Model):
     price = db.Column(db.Float, nullable=False)
     image_url = db.Column(db.String(255))
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)

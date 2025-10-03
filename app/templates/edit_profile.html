@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html>
-<head><title>Edit Profile - Rebookify</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Profile - Rebookify</title>
+</head>
 <body>
   <h2>Edit Your Profile</h2>
+
   <form method="POST">
-    <label>Name:</label> <input type="text" name="name" value="{{ user.name }}" required><br><br>
-    <label>Contact:</label> <input type="text" name="contact" value="{{ user.contact }}"><br><br>
+    <label>Name:</label><br/>
+    <input type="text" name="name" value="{{ user.name }}" required><br><br>
+    <label>Contact:</label><br/>
+    <input type="text" name="contact" value="{{ user.contact }}"><br><br>
     <input type="submit" value="Save Changes">
   </form>
+
   <p><a href="{{ url_for('profile') }}">Cancel</a></p>
 </body>
 </html>

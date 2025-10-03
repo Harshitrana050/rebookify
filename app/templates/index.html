@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html>
-<head><title>Rebookify Home</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rebookify Home</title>
+</head>
 <body>
   {% with messages = get_flashed_messages() %}
     {% if messages %}
-      <ul>{% for m in messages %}<li>{{m}}</li>{% endfor %}</ul>
+      <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
     {% endif %}
   {% endwith %}
+
   <h1>Welcome to Rebookify, {{ current_user.name }}!</h1>
   <p><a href="{{ url_for('profile') }}">Your Profile</a></p>
-  <p><a href="{{ url_for('books') }}">View All Books</a></p>
+  <p><a href="{{ url_for('books') }}">View Books</a></p>
   {% if current_user.role == 'seller' %}
     <p><a href="{{ url_for('add_book') }}">Add New Book</a></p>
   {% endif %}

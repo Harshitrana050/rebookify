@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html>
-<head><title>Your Profile - Rebookify</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Profile - Rebookify</title>
+</head>
 <body>
   <h2>Your Profile</h2>
+
   <p><strong>Name:</strong> {{ user.name }}</p>
   <p><strong>Email:</strong> {{ user.email }}</p>
   <p><strong>Contact:</strong> {{ user.contact or 'N/A' }}</p>
@@ -11,7 +16,7 @@
   <p><a href="{{ url_for('edit_profile') }}">Edit Profile</a></p>
 
   {% if user.role == 'seller' %}
-    <h3>Your Listed Books</h3>
+    <h3>Your Books</h3>
     <ul>
       {% for book in books %}
         <li>{{ book.title }} - ${{ "%.2f"|format(book.price) }}</li>
